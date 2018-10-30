@@ -1,0 +1,12 @@
+.vs/
+ConvertModel/
+FBXModel/
+Debug/
+Release/
+*.exe
+*.iobj
+*.ipdb
+*.pdb
+*.db
+*.cso
+*.opendb
