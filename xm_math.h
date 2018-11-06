@@ -12,14 +12,28 @@
 class XMMath
 {
 public:
+	static void Addition(DirectX::XMFLOAT2& valueReturn, const DirectX::XMFLOAT2& valueLeft, const DirectX::XMFLOAT2& valueRight);
 	static void Addition(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
+	static void Addition(DirectX::XMFLOAT4& valueReturn, const DirectX::XMFLOAT4& valueLeft, const DirectX::XMFLOAT4& valueRight);
+	
+	static void Subtraction(DirectX::XMFLOAT2& valueReturn, const DirectX::XMFLOAT2& valueLeft, const DirectX::XMFLOAT2& valueRight);
 	static void Subtraction(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
+	static void Subtraction(DirectX::XMFLOAT4& valueReturn, const DirectX::XMFLOAT4& valueLeft, const DirectX::XMFLOAT4& valueRight);
+
+	static void Multiplication(DirectX::XMFLOAT2& valueReturn, const DirectX::XMFLOAT2& valueLeft, float valueRight);
+	static void Multiplication(DirectX::XMFLOAT2& valueReturn, const DirectX::XMFLOAT2& valueLeft, const DirectX::XMFLOAT2& valueRight);
 	static void Multiplication(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, float valueRight);
-	static void Multiplication(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
+	static void Multiplication(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);	
+	static void Multiplication(DirectX::XMFLOAT4& valueReturn, const DirectX::XMFLOAT4& valueLeft, float valueRight);
+	static void Multiplication(DirectX::XMFLOAT4& valueReturn, const DirectX::XMFLOAT4& valueLeft, const DirectX::XMFLOAT4& valueRight);
+
+	static void Division(DirectX::XMFLOAT2& valueReturn, const DirectX::XMFLOAT2& valueLeft, const DirectX::XMFLOAT2& valueRight);
 	static void Division(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
+	static void Division(DirectX::XMFLOAT4& valueReturn, const DirectX::XMFLOAT4& valueLeft, const DirectX::XMFLOAT4& valueRight);
 
 	static void Normalize(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& value);
 	static float Length(const DirectX::XMFLOAT3& value);
+	static float LengthSq(const DirectX::XMFLOAT3& value);
 	static float Dot(const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
 	static void Cross(DirectX::XMFLOAT3& valueReturn, const DirectX::XMFLOAT3& valueLeft, const DirectX::XMFLOAT3& valueRight);
 	

@@ -10,14 +10,45 @@
 
 using namespace DirectX;
 
+void XMMath::Addition(XMFLOAT2& valueReturn, const XMFLOAT2& valueLeft, const XMFLOAT2& valueRight)
+{
+	valueReturn = { valueLeft.x + valueRight.x, valueLeft.y + valueRight.y };
+}
+
 void XMMath::Addition(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 {
 	valueReturn = { valueLeft.x + valueRight.x, valueLeft.y + valueRight.y, valueLeft.z + valueRight.z };
 }
 
+void XMMath::Addition(XMFLOAT4& valueReturn, const XMFLOAT4& valueLeft, const XMFLOAT4& valueRight)
+{
+	valueReturn = { valueLeft.x + valueRight.x, valueLeft.y + valueRight.y, valueLeft.z + valueRight.z, valueLeft.w + valueRight.w };
+}
+
+void XMMath::Subtraction(XMFLOAT2& valueReturn, const XMFLOAT2& valueLeft, const XMFLOAT2& valueRight)
+{
+	valueReturn = { valueLeft.x - valueRight.x, valueLeft.y - valueRight.y };
+}
+
 void XMMath::Subtraction(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 {
 	valueReturn = { valueLeft.x - valueRight.x, valueLeft.y - valueRight.y, valueLeft.z - valueRight.z };
+}
+
+void XMMath::Subtraction(XMFLOAT4& valueReturn, const XMFLOAT4& valueLeft, const XMFLOAT4& valueRight)
+{
+	valueReturn = { valueLeft.x - valueRight.x, valueLeft.y - valueRight.y, valueLeft.z - valueRight.z, valueLeft.w - valueRight.w };
+}
+
+
+void XMMath::Multiplication(XMFLOAT2& valueReturn, const XMFLOAT2& valueLeft, float valueRight)
+{
+	valueReturn = { valueLeft.x * valueRight, valueLeft.y * valueRight };
+}
+
+void XMMath::Multiplication(XMFLOAT2& valueReturn, const XMFLOAT2& valueLeft, const XMFLOAT2& valueRight)
+{
+	valueReturn = { valueLeft.x * valueRight.x, valueLeft.y * valueRight.y };
 }
 
 void XMMath::Multiplication(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, float valueRight)
@@ -30,9 +61,29 @@ void XMMath::Multiplication(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, co
 	valueReturn = { valueLeft.x * valueRight.x, valueLeft.y * valueRight.y, valueLeft.z * valueRight.z };
 }
 
+void XMMath::Multiplication(XMFLOAT4& valueReturn, const XMFLOAT4& valueLeft, float valueRight)
+{
+	valueReturn = { valueLeft.x * valueRight, valueLeft.y * valueRight, valueLeft.z * valueRight, valueLeft.w * valueRight };
+}
+
+void XMMath::Multiplication(XMFLOAT4& valueReturn, const XMFLOAT4& valueLeft, const XMFLOAT4& valueRight)
+{
+	valueReturn = { valueLeft.x * valueRight.x, valueLeft.y * valueRight.y, valueLeft.z * valueRight.z, valueLeft.w * valueRight.w };
+}
+
+void XMMath::Division(XMFLOAT2& valueReturn, const XMFLOAT2& valueLeft, const XMFLOAT2& valueRight)
+{
+	valueReturn = { valueLeft.x / valueRight.x, valueLeft.y / valueRight.y };
+}
+
 void XMMath::Division(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 {
 	valueReturn = { valueLeft.x / valueRight.x, valueLeft.y / valueRight.y, valueLeft.z / valueRight.z };
+}
+
+void XMMath::Division(XMFLOAT4& valueReturn, const XMFLOAT4& valueLeft, const XMFLOAT4& valueRight)
+{
+	valueReturn = { valueLeft.x / valueRight.x, valueLeft.y / valueRight.y, valueLeft.z / valueRight.z, valueLeft.w / valueRight.w };
 }
 
 void XMMath::Normalize(XMFLOAT3& valueReturn, const XMFLOAT3& value)
@@ -51,12 +102,19 @@ float XMMath::Length(const DirectX::XMFLOAT3& value)
 	return xmFloat3.x;
 }
 
+float XMMath::LengthSq(const DirectX::XMFLOAT3& value)
+{
+	XMVECTOR xmValue = XMLoadFloat3(&value);
+	xmValue = XMVector3LengthSq(xmValue);
+	XMFLOAT3 xmFloat3;
+	XMStoreFloat3(&xmFloat3, xmValue);
+	return xmFloat3.x;
+}
+
 float XMMath::Dot(const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 {
 	XMVECTOR xmValueLeft = XMLoadFloat3(&valueLeft);
-	xmValueLeft = XMVector3Normalize(xmValueLeft);
 	XMVECTOR xmValueRight = XMLoadFloat3(&valueRight);
-	xmValueRight = XMVector3Normalize(xmValueRight);
 	XMVECTOR xmInner = XMVector3Dot(xmValueLeft, xmValueRight);
 	return XMVectorGetX(xmInner);
 }
@@ -64,9 +122,7 @@ float XMMath::Dot(const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 void XMMath::Cross(XMFLOAT3& valueReturn, const XMFLOAT3& valueLeft, const XMFLOAT3& valueRight)
 {
 	XMVECTOR xmValueLeft = XMLoadFloat3(&valueLeft);
-	xmValueLeft = XMVector3Normalize(xmValueLeft);
 	XMVECTOR xmValueRight = XMLoadFloat3(&valueRight);
-	xmValueRight = XMVector3Normalize(xmValueRight);
 	XMVECTOR xmOuter = XMVector3Cross(xmValueLeft, xmValueRight);
 	XMStoreFloat3(&valueReturn, xmOuter);
 }
