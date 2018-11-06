@@ -62,7 +62,7 @@ struct MODEL
 constexpr unsigned int NUM = 1;
 static const std::string g_pModelFile[] =
 {
-	{""},
+	{"t-90a"},
 };
 
 class LoadFBX;
@@ -70,7 +70,7 @@ class LoadFBX;
 class SaveModel
 {
 public:
-	bool Init(int modelName);
+	bool Init(std::string modelFileName);
 };
 
 class SaveModelManager

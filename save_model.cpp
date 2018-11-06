@@ -17,18 +17,18 @@ using namespace DirectX;
 static const std::string FBX_MODEL_DIRECTORY = "FBXModel";
 static const std::string CONVERT_MODEL_DIRECTORY = "ConvertModel";
 
-bool SaveModel::Init(int modelName)
+bool SaveModel::Init(std::string modelFileName)
 {
 	LoadFBX loadFbx;
 
 	MODEL model;
-	if (!loadFbx.Load(FBX_MODEL_DIRECTORY + "/" + g_pModelFile[modelName] + ".fbx", model))
+	if (!loadFbx.Load(FBX_MODEL_DIRECTORY + "/" + modelFileName + ".fbx", model))
 	{
 		return false;
 	}
 
 	std::ofstream fout;
-	fout.open(CONVERT_MODEL_DIRECTORY + "/" + g_pModelFile[modelName] + ".model", std::ios::out | std::ios::binary | std::ios::trunc);
+	fout.open(CONVERT_MODEL_DIRECTORY + "/" + modelFileName + ".model", std::ios::out | std::ios::binary | std::ios::trunc);
 	if (!fout)
 	{
 		return false;
@@ -96,7 +96,7 @@ bool SaveModelManager::Init()
 	{
 		SaveModel model;
 
-		if (!model.Init(i))
+		if (!model.Init(g_pModelFile[i]))
 		{
 			return false;
 		}

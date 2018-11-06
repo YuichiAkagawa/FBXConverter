@@ -259,11 +259,13 @@ void LoadFBX::GetPosition(FbxMesh* mesh, XMFLOAT4X4& mtx)
 
 		//頂点情報をインデックス順で取得
 		VERTEXPOINTBONE temp;
-		//頂点座標反転
-		temp.position = { -(float)vertex[i][0], (float)vertex[i][1], (float)vertex[i][2] };
+		temp.position = { (float)vertex[i][0], (float)vertex[i][1], (float)vertex[i][2] };
 
 		//座標変換
 		XMMath::Transform(temp.position, temp.position, mtx);
+
+		//頂点座標X反転
+		temp.position.x *= -1;
 
 		for (int j = 0; j < 4; ++j)
 		{
@@ -453,12 +455,15 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, XMFLOAT4X4& mtx)
 				{
 					XMFLOAT3 tempNormal;
 					//法線の取得
-					//法線反転
-					tempNormal.x = -(float)normal->GetDirectArray().GetAt(j)[0];
+					tempNormal.x = (float)normal->GetDirectArray().GetAt(j)[0];
 					tempNormal.y = (float)normal->GetDirectArray().GetAt(j)[1];
 					tempNormal.z = (float)normal->GetDirectArray().GetAt(j)[2];
 
 					XMMath::TransformNormal(tempNormal, tempNormal, mtx);
+
+					//法線反転
+					tempNormal.x *= -1;
+
 					XMMath::Normalize(tempNormal, tempNormal);
 
 					directNormal.emplace_back(tempNormal);
@@ -492,13 +497,16 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, XMFLOAT4X4& mtx)
 			for (unsigned int j = 0; j < normalCount; ++j)
 			{
 				//法線の取得
-				//法線反転
 				XMFLOAT3 tempNormal;
-				tempNormal.x = -(float)normal->GetDirectArray().GetAt(j)[0];
+				tempNormal.x = (float)normal->GetDirectArray().GetAt(j)[0];
 				tempNormal.y = (float)normal->GetDirectArray().GetAt(j)[1];
 				tempNormal.z = (float)normal->GetDirectArray().GetAt(j)[2];
 
 				XMMath::TransformNormal(tempNormal, tempNormal, mtx);
+
+				//法線反転
+				tempNormal.x *= -1;
+
 				XMMath::Normalize(tempNormal, tempNormal);
 				
 				directNormal.emplace_back(tempNormal);
@@ -568,12 +576,15 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, XMFLOAT4X4& mtx)
 				{
 					XMFLOAT3 tempTangent;
 					//Tangentの取得
-					//Tangent反転
-					tempTangent.x = -(float)tangent->GetDirectArray().GetAt(j)[0];
+					tempTangent.x = (float)tangent->GetDirectArray().GetAt(j)[0];
 					tempTangent.y = (float)tangent->GetDirectArray().GetAt(j)[1];
 					tempTangent.z = (float)tangent->GetDirectArray().GetAt(j)[2];
 
 					XMMath::TransformNormal(tempTangent, tempTangent, mtx);
+
+					//Tangent反転
+					tempTangent.x *= -1;
+
 					XMMath::Normalize(tempTangent, tempTangent);
 
 					directTangent.emplace_back(tempTangent);
@@ -607,13 +618,16 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, XMFLOAT4X4& mtx)
 			for (unsigned int j = 0; j < tangentCount; ++j)
 			{
 				//Tangentの取得
-				//Tangent反転
 				XMFLOAT3 tempTangent;
-				tempTangent.x = -(float)tangent->GetDirectArray().GetAt(j)[0];
+				tempTangent.x = (float)tangent->GetDirectArray().GetAt(j)[0];
 				tempTangent.y = (float)tangent->GetDirectArray().GetAt(j)[1];
 				tempTangent.z = (float)tangent->GetDirectArray().GetAt(j)[2];
 
 				XMMath::TransformNormal(tempTangent, tempTangent, mtx);
+
+				//Tangent反転
+				tempTangent.x *= -1;
+
 				XMMath::Normalize(tempTangent, tempTangent);
 
 				directTangent.emplace_back(tempTangent);
