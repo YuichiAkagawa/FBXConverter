@@ -59,12 +59,6 @@ struct MODEL
 	std::vector<BONE>	bone;
 };
 
-constexpr unsigned int NUM = 1;
-static const std::string g_pModelFile[] =
-{
-	{"t-90a"},
-};
-
 class LoadFBX;
 
 class SaveModel

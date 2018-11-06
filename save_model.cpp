@@ -7,28 +7,28 @@
 #include <codecvt>
 #include <DirectXMath.h>
 #include <fstream>
-
+#include "directory_reader.h"
 #include "load_fbx.h"
 #include "main.h"
 #include "save_model.h"
 
 using namespace DirectX;
 
-static const std::string FBX_MODEL_DIRECTORY = "FBXModel";
-static const std::string CONVERT_MODEL_DIRECTORY = "ConvertModel";
+static const std::string FBX_MODEL_DIRECTORY = "FBXModel/";
+static const std::string CONVERT_MODEL_DIRECTORY = "ConvertModel/";
 
 bool SaveModel::Init(std::string modelFileName)
 {
 	LoadFBX loadFbx;
 
 	MODEL model;
-	if (!loadFbx.Load(FBX_MODEL_DIRECTORY + "/" + modelFileName + ".fbx", model))
+	if (!loadFbx.Load(FBX_MODEL_DIRECTORY + modelFileName + ".fbx", model))
 	{
 		return false;
 	}
 
 	std::ofstream fout;
-	fout.open(CONVERT_MODEL_DIRECTORY + "/" + modelFileName + ".model", std::ios::out | std::ios::binary | std::ios::trunc);
+	fout.open(CONVERT_MODEL_DIRECTORY + modelFileName + ".model", std::ios::out | std::ios::binary | std::ios::trunc);
 	if (!fout)
 	{
 		return false;
@@ -92,11 +92,13 @@ bool SaveModel::Init(std::string modelFileName)
 
 bool SaveModelManager::Init()
 {
-	for (unsigned int i = 0; i < NUM; i++)
+	std::vector<std::string> modelNames = DirectoryReader::Read(FBX_MODEL_DIRECTORY);
+
+	for (size_t i = 0; i < modelNames.size(); i++)
 	{
 		SaveModel model;
 
-		if (!model.Init(g_pModelFile[i]))
+		if (!model.Init(modelNames[i]))
 		{
 			return false;
 		}

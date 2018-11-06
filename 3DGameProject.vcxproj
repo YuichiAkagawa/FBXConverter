@@ -201,12 +201,14 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="directory_reader.cpp" />
     <ClCompile Include="load_fbx.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="save_model.cpp" />
     <ClCompile Include="xm_math.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="directory_reader.h" />
     <ClInclude Include="load_fbx.h" />
     <ClInclude Include="save_model.h" />
     <ClInclude Include="main.h" />
