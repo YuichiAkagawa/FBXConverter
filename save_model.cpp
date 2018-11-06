@@ -92,9 +92,10 @@ bool SaveModel::Init(int modelName)
 
 bool SaveModelManager::Init()
 {
-	for (unsigned int i = 0; i < g_pModelFile->length(); i++)
+	for (unsigned int i = 0; i < NUM; i++)
 	{
 		SaveModel model;
+
 		if (!model.Init(i))
 		{
 			return false;

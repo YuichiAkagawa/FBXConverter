@@ -59,28 +59,10 @@ struct MODEL
 	std::vector<BONE>	bone;
 };
 
+constexpr unsigned int NUM = 1;
 static const std::string g_pModelFile[] =
 {
-	{ "hornet_pilot" },
-	{ "hornet_body" },
-	{ "hornet_body_parts" },
-	{ "hornet_body_parts2" },
-	{ "hornet_aim120" },
-	{ "hornet_aim9_right" },
-	{ "hornet_aim9_left" },
-	{ "hornet_flap_right" },
-	{ "hornet_flap_left" },
-	{ "hornet_elevator_right" },
-	{ "hornet_elevator_left" },
-	{ "hornet_aileron_right" },
-	{ "hornet_aileron_left" },
-	{ "hornet_radder_right" },
-	{ "hornet_radder_left" },
-	{ "hornet_canopy" },
-	{ "hornet_glass_front" },
-	{ "hornet_glass_back" },
-	{ "skydome" },
-	{ "test" },
+	{""},
 };
 
 class LoadFBX;
