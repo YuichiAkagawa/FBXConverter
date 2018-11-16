@@ -5,14 +5,13 @@
 //**
 //**-------------------------------------------------------**
 #include <codecvt>
-#include <DirectXMath.h>
 #include <fstream>
 #include "directory_reader.h"
 #include "load_fbx.h"
 #include "main.h"
 #include "save_model.h"
 
-using namespace DirectX;
+using namespace XMMath;
 
 static const std::string FBX_MODEL_DIRECTORY = "FBXModel/";
 static const std::string CONVERT_MODEL_DIRECTORY = "ConvertModel/";
@@ -43,13 +42,13 @@ bool SaveModel::Init(std::string modelFileName)
 
 		for (unsigned int j = 0; j < vertexVectorSize; j++)
 		{
-			fout.write((const char*)&model.mesh[i].vertex[j].boneIndex, sizeof(XMFLOAT4));
-			fout.write((const char*)&model.mesh[i].vertex[j].color, sizeof(XMFLOAT4));
-			fout.write((const char*)&model.mesh[i].vertex[j].normal, sizeof(XMFLOAT3));
-			fout.write((const char*)&model.mesh[i].vertex[j].position, sizeof(XMFLOAT3));
-			fout.write((const char*)&model.mesh[i].vertex[j].tangent, sizeof(XMFLOAT3));
-			fout.write((const char*)&model.mesh[i].vertex[j].texcoord, sizeof(XMFLOAT2));
-			fout.write((const char*)&model.mesh[i].vertex[j].weight, sizeof(XMFLOAT4));
+			fout.write((const char*)&model.mesh[i].vertex[j].boneIndex, sizeof(Float4));
+			fout.write((const char*)&model.mesh[i].vertex[j].color, sizeof(Float4));
+			fout.write((const char*)&model.mesh[i].vertex[j].normal, sizeof(Float3));
+			fout.write((const char*)&model.mesh[i].vertex[j].position, sizeof(Float3));
+			fout.write((const char*)&model.mesh[i].vertex[j].tangent, sizeof(Float3));
+			fout.write((const char*)&model.mesh[i].vertex[j].texcoord, sizeof(Float2));
+			fout.write((const char*)&model.mesh[i].vertex[j].weight, sizeof(Float4));
 		}
 
 		size_t indexVectorSize = model.mesh[i].index.size();
@@ -58,7 +57,7 @@ bool SaveModel::Init(std::string modelFileName)
 		{
 			fout.write((const char*)&model.mesh[i].index[j], sizeof(WORD));
 		}
-		fout.write((const char*)&model.mesh[i].frameTransMtx, sizeof(XMFLOAT4X4));
+		fout.write((const char*)&model.mesh[i].frameTransMtx, sizeof(Matrix));
 
 		size_t textureNameSize = model.mesh[i].material.textureName.size();
 		fout.write((const char*)&textureNameSize, sizeof(size_t));	
@@ -74,16 +73,16 @@ bool SaveModel::Init(std::string modelFileName)
 		fout.write((const char*)&animMtxVectorSize, sizeof(size_t));
 		for(unsigned int j = 0; j < animMtxVectorSize; j++)
 		{
-			fout.write((const char*)&model.bone[i].animMtx[j], sizeof(XMFLOAT4X4));
+			fout.write((const char*)&model.bone[i].animMtx[j], sizeof(Matrix));
 		}
-		fout.write((const char*)&model.bone[i].initMtx, sizeof(XMFLOAT4X4));
+		fout.write((const char*)&model.bone[i].initMtx, sizeof(Matrix));
 
 		size_t boneNameSize = model.bone[i].name.size();
 		fout.write((const char*)&boneNameSize, sizeof(size_t));
 		const char* boneName = model.bone[i].name.c_str();
 		fout.write(boneName, boneNameSize);
 	}
-	fout.write((const char*)&model.frameTransMtx, sizeof(XMFLOAT4X4));
+	fout.write((const char*)&model.frameTransMtx, sizeof(Matrix));
 
 	fout.close();
 

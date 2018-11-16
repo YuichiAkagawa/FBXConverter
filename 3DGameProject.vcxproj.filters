@@ -17,9 +17,6 @@
     <ClCompile Include="load_fbx.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="xm_math.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="save_model.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>

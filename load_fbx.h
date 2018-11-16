@@ -11,7 +11,7 @@
 #include <fbxsdk.h>
 #include <unordered_map>
 #include <string>
-#include <DirectXMath.h>
+#include "xm_math.h"
 #include "save_model.h"
 
 struct FBXANIMATION
@@ -26,11 +26,11 @@ struct FBXANIMATION
 
 struct VERTEXFBX
 {
-	DirectX::XMFLOAT3  position;
-	DirectX::XMFLOAT3  normal;
-	DirectX::XMFLOAT4  color;
-	DirectX::XMFLOAT2  texcoord;
-	DirectX::XMFLOAT3  positionDefault;
+	XMMath::Float3  position;
+	XMMath::Float3  normal;
+	XMMath::Float4  color;
+	XMMath::Float2  texcoord;
+	XMMath::Float3  positionDefault;
 };
 
 struct VERTEXBONE
@@ -41,7 +41,7 @@ struct VERTEXBONE
 
 struct VERTEXPOINTBONE
 {
-	DirectX::XMFLOAT3 position;
+	XMMath::Float3 position;
 	VERTEXBONE boneData[4];
 };
 
@@ -54,7 +54,7 @@ struct UVSet
 struct FBXUV
 {
 	std::string uvSetName;
-	std::vector<DirectX::XMFLOAT2> texcoord;
+	std::vector<XMMath::Float2> texcoord;
 };
 
 struct MESH_
@@ -89,11 +89,11 @@ private:
 	// メッシュの情報を取得する
 	bool GetMesh(FbxNode* pNode, MODEL& model);
 
-	void	GetPosition(FbxMesh* mesh, DirectX::XMFLOAT4X4& mtx);// 頂点座標
+	void	GetPosition(FbxMesh* mesh, XMMath::Matrix& mtx);// 頂点座標
 	void	GetMeshMaterialList(FbxMesh* mesh);			// メッシュマテリアルリストの取得
 	void	GetBone(FbxMesh* mesh);						// ボーン
-	void	GetVertexNormal(FbxMesh* mesh, DirectX::XMFLOAT4X4& mtx);				// 法線
-	void	GetVertexTangent(FbxMesh* mesh, DirectX::XMFLOAT4X4& mtx);			// tangent
+	void	GetVertexNormal(FbxMesh* mesh, XMMath::Matrix& mtx);				// 法線
+	void	GetVertexTangent(FbxMesh* mesh, XMMath::Matrix& mtx);			// tangent
 	void	GetVertexUV(FbxMesh* mesh);					// テクスチャ座標
 	void	GetTextureNames(FbxMesh* mesh);				// テクスチャ
 	void	GetVertexColor(FbxMesh* mesh);				// 色
@@ -101,7 +101,7 @@ private:
 	bool CreateModelData(MODEL& model);
 	bool CreateVeretx(MODEL& model, int indexNum, const int* index, UVSet uv);
 
-	void CreateMtx(DirectX::XMFLOAT4X4& mtx, const FbxMatrix fbxMtx);
+	void CreateMtx(XMMath::Matrix& mtx, const FbxMatrix fbxMtx);
 	void ReleaseTempObj(void);			// 一時情報の解放
 	void ReleaseTempAnimObj(void);			// 一時情報の解放
 
@@ -121,9 +121,9 @@ private:
 	unsigned int		indexCount_;
 	std::vector<VERTEXPOINTBONE>			tempPoint_;
 	std::vector<VERTEXPOINTBONE>			tempVertex_;
-	std::vector<DirectX::XMFLOAT3>			tempNormal_;
-	std::vector<DirectX::XMFLOAT3>			tempTangent_;
-	std::vector<DirectX::XMFLOAT4>			tempColor_;
+	std::vector<XMMath::Float3>			tempNormal_;
+	std::vector<XMMath::Float3>			tempTangent_;
+	std::vector<XMMath::Float4>			tempColor_;
 	std::vector<FBXUV>						tempTexcoord_;
 	std::vector<UVSet>						tempUVSet_;
 	std::vector<FBXANIMATION>				tempAnim_;
@@ -135,9 +135,9 @@ private:
 	std::vector<FbxNode*>					tempNode_;
 	std::vector<BONE>						animBoneList_;
 
-	DirectX::XMFLOAT4X4 mtx_;		//変換全体
-	DirectX::XMFLOAT4X4 mtxViewZ_;	//Zバッファ用
-	DirectX::XMFLOAT4X4 mtxProjZ_;
+	XMMath::Matrix mtx_;		//変換全体
+	XMMath::Matrix mtxViewZ_;	//Zバッファ用
+	XMMath::Matrix mtxProjZ_;
 };
 
 #endif //_LOAD_FBX_H_

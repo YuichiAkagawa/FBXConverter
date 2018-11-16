@@ -205,7 +205,6 @@
     <ClCompile Include="load_fbx.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="save_model.cpp" />
-    <ClCompile Include="xm_math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="directory_reader.h" />

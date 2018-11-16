@@ -11,25 +11,25 @@
 #include <d3d11.h>
 #include <string>
 #include <vector>
-#include <DirectXMath.h>
+#include "xm_math.h"
 
 struct VERTEX
 {
-	DirectX::XMFLOAT3 position;
-	DirectX::XMFLOAT3 normal;
-	DirectX::XMFLOAT4 color;
-	DirectX::XMFLOAT2 texcoord;
-	DirectX::XMFLOAT3 tangent;
-	DirectX::XMFLOAT4 boneIndex;
-	DirectX::XMFLOAT4 weight;
+	XMMath::Float3 position;
+	XMMath::Float3 normal;
+	XMMath::Float4 color;
+	XMMath::Float2 texcoord;
+	XMMath::Float3 tangent;
+	XMMath::Float4 boneIndex;
+	XMMath::Float4 weight;
 };
 
 struct MATERIAL
 {
-	DirectX::XMFLOAT4				ambient;
-	DirectX::XMFLOAT4				diffuse;
-	DirectX::XMFLOAT4				specular;
-	DirectX::XMFLOAT4				emission;
+	XMMath::Float4				ambient;
+	XMMath::Float4				diffuse;
+	XMMath::Float4				specular;
+	XMMath::Float4				emission;
 	float							power;
 	ID3D11ShaderResourceView*		texture;
 	std::string						textureName;
@@ -38,13 +38,13 @@ struct MATERIAL
 struct BONE
 {
 	std::string		name;
-	DirectX::XMFLOAT4X4	initMtx;
-	std::vector<std::vector<DirectX::XMFLOAT4X4>> animMtx;
+	XMMath::Matrix	initMtx;
+	std::vector<std::vector<XMMath::Matrix>> animMtx;
 };
 
 struct MESH
 {
-	DirectX::XMFLOAT4X4			frameTransMtx;
+	XMMath::Matrix			frameTransMtx;
 	std::vector<VERTEX>			vertex;
 	std::vector<WORD>			index;
 	ID3D11Buffer*				vertexBuffer;
@@ -54,7 +54,7 @@ struct MESH
 
 struct MODEL
 {
-	DirectX::XMFLOAT4X4		frameTransMtx;
+	XMMath::Matrix		frameTransMtx;
 	std::vector<MESH>	mesh;
 	std::vector<BONE>	bone;
 };

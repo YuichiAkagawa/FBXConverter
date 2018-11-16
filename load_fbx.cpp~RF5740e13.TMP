@@ -11,14 +11,13 @@
 #include <string.h>
 #include <DirectXMath.h>
 #include <fbxsdk.h>
+#include "xm_math.h"
 #include "load_fbx.h"
 
 #ifdef IOS_REF
 	#undef  IOS_REF
 	#define IOS_REF (*(pManager->GetIOSettings()))
 #endif
-
-using namespace XMMath;
 
 // デストラクタ
 LoadFBX::~LoadFBX(void)
@@ -124,11 +123,11 @@ bool LoadFBX::LoadAnimation(std::string fileName, MODEL& model)
 	{
 		if (bone.animMtx.size() != animCnt + 1)
 		{
-			std::vector<Matrix> temp;
+			std::vector<XMFLOAT4X4> temp;
 			for (unsigned int i = 0; i < animFrame; ++i)
 			{
-				Matrix t;
-				t.Identity();
+				XMFLOAT4X4 t;
+				XMMath::Identity(t);
 				temp.emplace_back(t);
 			}
 			bone.animMtx.emplace_back(temp);
@@ -194,7 +193,7 @@ bool LoadFBX::GetMesh(FbxNode* pNode, MODEL& model)
 
 			//ローカル行列取得
 			FbxAMatrix& mtxFbx = pChild->EvaluateLocalTransform();
-			Matrix mtxTransform;
+			XMFLOAT4X4 mtxTransform;
 			mtxTransform._11 = (float)mtxFbx.Get(0, 0);
 			mtxTransform._12 = (float)mtxFbx.Get(0, 1);
 			mtxTransform._13 = (float)mtxFbx.Get(0, 2);
@@ -244,7 +243,7 @@ bool LoadFBX::GetMesh(FbxNode* pNode, MODEL& model)
 }
 
 // 頂点座標を取得する
-void LoadFBX::GetPosition(FbxMesh* mesh, Matrix& mtx)
+void LoadFBX::GetPosition(FbxMesh* mesh, XMFLOAT4X4& mtx)
 {
 	// メッシュマテリアルリストの取得
 	this->GetMeshMaterialList(mesh);
@@ -268,7 +267,7 @@ void LoadFBX::GetPosition(FbxMesh* mesh, Matrix& mtx)
 		temp.position = { (float)vertex[i][0], (float)vertex[i][1], (float)vertex[i][2] };
 
 		//座標変換
-		temp.position = Transform(temp.position, mtx);
+		XMMath::Transform(temp.position, temp.position, mtx);
 
 		//頂点座標X反転
 		temp.position.x *= -1;
@@ -323,7 +322,7 @@ void LoadFBX::GetBone(FbxMesh* mesh)
 	{
 		BONE ofBone;
 		ofBone.name = mesh->GetNode()->GetName();
-		ofBone.initMtx.Identity();
+		XMMath::Identity(ofBone.initMtx);
 		boneList_.emplace_back(ofBone);
 
 		unsigned int cnt = 0;
@@ -429,7 +428,7 @@ void LoadFBX::GetBone(FbxMesh* mesh)
 }
 
 // 法線の取得
-void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
+void LoadFBX::GetVertexNormal(FbxMesh* mesh, XMFLOAT4X4& mtx)
 {
 	// 法線セット数を取得
 	int normalLayerCount = mesh->GetElementNormalCount();
@@ -456,20 +455,21 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
 			{
 				int normalCount = normal->GetDirectArray().GetCount();
 
-				std::vector<Float3> directNormal;
+				std::vector<XMFLOAT3> directNormal;
 				for (int j = 0; j < normalCount; ++j)
 				{
-					Float3 tempNormal;
+					XMFLOAT3 tempNormal;
 					//法線の取得
 					tempNormal.x = (float)normal->GetDirectArray().GetAt(j)[0];
 					tempNormal.y = (float)normal->GetDirectArray().GetAt(j)[1];
 					tempNormal.z = (float)normal->GetDirectArray().GetAt(j)[2];
 
-					tempNormal = TransformNormal(tempNormal, mtx);
+					XMMath::TransformNormal(tempNormal, tempNormal, mtx);
 
 					//法線反転
 					tempNormal.x *= -1;
-					tempNormal.Normalize();
+
+					XMMath::Normalize(tempNormal, tempNormal);
 
 					directNormal.emplace_back(tempNormal);
 				}
@@ -478,7 +478,7 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
 				int* index = mesh->GetPolygonVertices();
 				for (unsigned int j = 0; j < indexCount_; j++)
 				{
-					Float3 tempNormal = { directNormal[index[j]].x, directNormal[index[j]].y, directNormal[index[j]].z };
+					XMFLOAT3 tempNormal = { directNormal[index[j]].x, directNormal[index[j]].y, directNormal[index[j]].z };
 					tempNormal_.emplace_back(tempNormal);
 				}
 			}
@@ -498,20 +498,21 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
 			unsigned int normalCount = normal->GetDirectArray().GetCount();
 			unsigned int indexCount  = normal->GetIndexArray().GetCount();
 
-			std::vector<Float3> directNormal;
+			std::vector<XMFLOAT3> directNormal;
 			for (unsigned int j = 0; j < normalCount; ++j)
 			{
 				//法線の取得
-				Float3 tempNormal;
+				XMFLOAT3 tempNormal;
 				tempNormal.x = (float)normal->GetDirectArray().GetAt(j)[0];
 				tempNormal.y = (float)normal->GetDirectArray().GetAt(j)[1];
 				tempNormal.z = (float)normal->GetDirectArray().GetAt(j)[2];
 
-				tempNormal = TransformNormal(tempNormal, mtx);
+				XMMath::TransformNormal(tempNormal, tempNormal, mtx);
 
 				//法線反転
 				tempNormal.x *= -1;
-				tempNormal.Normalize();
+
+				XMMath::Normalize(tempNormal, tempNormal);
 				
 				directNormal.emplace_back(tempNormal);
 			}
@@ -528,7 +529,7 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
 				int* index = mesh->GetPolygonVertices();
 				for (int j = 0; j < normal->GetIndexArray().GetCount(); ++j)
 				{
-					Float3 tempNormal = { directNormal[index[j]].x, directNormal[index[j]].y, directNormal[index[j]].z };
+					XMFLOAT3 tempNormal = { directNormal[index[j]].x, directNormal[index[j]].y, directNormal[index[j]].z };
 					tempNormal_.emplace_back(tempNormal);
 				}
 			}
@@ -541,7 +542,7 @@ void LoadFBX::GetVertexNormal(FbxMesh* mesh, Matrix& mtx)
 }
 
 // Tangentの取得
-void LoadFBX::GetVertexTangent(FbxMesh* mesh, Matrix& mtx)
+void LoadFBX::GetVertexTangent(FbxMesh* mesh, XMFLOAT4X4& mtx)
 {
 	// Tangentセット数を取得
 	int tangentLayerCount = mesh->GetElementTangentCount();
@@ -575,21 +576,21 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, Matrix& mtx)
 			{
 				int tangentCount = tangent->GetDirectArray().GetCount();
 
-				std::vector<Float3> directTangent;
+				std::vector<XMFLOAT3> directTangent;
 				for (int j = 0; j < tangentCount; ++j)
 				{
-					Float3 tempTangent;
+					XMFLOAT3 tempTangent;
 					//Tangentの取得
 					tempTangent.x = (float)tangent->GetDirectArray().GetAt(j)[0];
 					tempTangent.y = (float)tangent->GetDirectArray().GetAt(j)[1];
 					tempTangent.z = (float)tangent->GetDirectArray().GetAt(j)[2];
 
-					tempTangent = TransformNormal(tempTangent, mtx);
+					XMMath::TransformNormal(tempTangent, tempTangent, mtx);
 
 					//Tangent反転
 					tempTangent.x *= -1;
 
-					tempTangent.Normalize();
+					XMMath::Normalize(tempTangent, tempTangent);
 
 					directTangent.emplace_back(tempTangent);
 				}
@@ -598,7 +599,7 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, Matrix& mtx)
 				int* index = mesh->GetPolygonVertices();
 				for (unsigned int j = 0; j < indexCount_; j++)
 				{
-					Float3 tempTangent = { directTangent[index[j]].x, directTangent[index[j]].y, directTangent[index[j]].z };
+					XMFLOAT3 tempTangent = { directTangent[index[j]].x, directTangent[index[j]].y, directTangent[index[j]].z };
 					tempTangent_.emplace_back(tempTangent);
 				}
 			}
@@ -618,21 +619,21 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, Matrix& mtx)
 			unsigned int tangentCount = tangent->GetDirectArray().GetCount();
 			unsigned int indexCount = tangent->GetIndexArray().GetCount();
 
-			std::vector<Float3> directTangent;
+			std::vector<XMFLOAT3> directTangent;
 			for (unsigned int j = 0; j < tangentCount; ++j)
 			{
 				//Tangentの取得
-				Float3 tempTangent;
+				XMFLOAT3 tempTangent;
 				tempTangent.x = (float)tangent->GetDirectArray().GetAt(j)[0];
 				tempTangent.y = (float)tangent->GetDirectArray().GetAt(j)[1];
 				tempTangent.z = (float)tangent->GetDirectArray().GetAt(j)[2];
 
-				tempTangent = TransformNormal(tempTangent, mtx);
+				XMMath::TransformNormal(tempTangent, tempTangent, mtx);
 
 				//Tangent反転
 				tempTangent.x *= -1;
 
-				tempTangent.Normalize();
+				XMMath::Normalize(tempTangent, tempTangent);
 
 				directTangent.emplace_back(tempTangent);
 			}
@@ -649,7 +650,7 @@ void LoadFBX::GetVertexTangent(FbxMesh* mesh, Matrix& mtx)
 				int* index = mesh->GetPolygonVertices();
 				for (int j = 0; j < tangent->GetIndexArray().GetCount(); ++j)
 				{
-					Float3 tempTangent = { directTangent[index[j]].x, directTangent[index[j]].y, directTangent[index[j]].z };
+					XMFLOAT3 tempTangent = { directTangent[index[j]].x, directTangent[index[j]].y, directTangent[index[j]].z };
 					tempTangent_.emplace_back(tempTangent);
 				}
 			}
@@ -697,7 +698,7 @@ void LoadFBX::GetVertexUV(FbxMesh* mesh)
 					int index = UV->GetIndexArray().GetAt(j);
 					
 					//テクスチャ座標反転
-					Float2 temp = { (float)UV->GetDirectArray().GetAt(index)[0] , 1.0f - (float)UV->GetDirectArray().GetAt(index)[1] };
+					XMFLOAT2 temp = { (float)UV->GetDirectArray().GetAt(index)[0] , 1.0f - (float)UV->GetDirectArray().GetAt(index)[1] };
 					tempUV.texcoord.emplace_back(temp);
 				}
 				// UVSet名を取得
@@ -900,7 +901,7 @@ void LoadFBX::GetVertexColor(FbxMesh* mesh)
 	{
 		for (unsigned int i = 0; i < indexCount_; ++i)
 		{
-			Float4 temp = Float4(1, 1, 1, 1);
+			XMFLOAT4 temp = XMFLOAT4(1, 1, 1, 1);
 			tempColor_.emplace_back(temp);
 		}
 	}
@@ -925,7 +926,7 @@ void LoadFBX::GetVertexColor(FbxMesh* mesh)
 				for (unsigned int j = 0; j < indexCount_; ++j)
 				{
 					FbxSurfaceLambert* lambert = (FbxSurfaceLambert*)material;
-					Float4 diffuse = Float4(1, 1, 1, 1);
+					XMFLOAT4 diffuse = XMFLOAT4(1, 1, 1, 1);
 					diffuse.x = (float)lambert->Diffuse.Get()[0];
 					diffuse.y = (float)lambert->Diffuse.Get()[1];
 					diffuse.z = (float)lambert->Diffuse.Get()[2];
@@ -955,7 +956,7 @@ void LoadFBX::GetVertexColor(FbxMesh* mesh)
 						for (int j = 0; j < indexCount; ++j)
 						{
 							FbxSurfaceLambert* lambert = (FbxSurfaceLambert*)material;
-							Float4 diffuse = Float4(1, 1, 1, 1);
+							XMFLOAT4 diffuse = XMFLOAT4(1, 1, 1, 1);
 							diffuse.x = (float)lambert->Diffuse.Get()[0];
 							diffuse.y = (float)lambert->Diffuse.Get()[1];
 							diffuse.z = (float)lambert->Diffuse.Get()[2];
@@ -984,7 +985,7 @@ void LoadFBX::GetVertexColor(FbxMesh* mesh)
 	{
 		for (unsigned int j = tempColor_.size(); j < indexCount_; ++j)
 		{
-			tempColor_.emplace_back(Float4(1, 1, 1, 1));
+			tempColor_.emplace_back(XMFLOAT4(1, 1, 1, 1));
 		}
 	}
 }
@@ -1054,15 +1055,15 @@ bool LoadFBX::CreateVeretx(MODEL& model, int indexNum, const int* index, UVSet u
 		tempTexcoord_[0].texcoord.size() == size &&
 		tempColor_.size() == size)
 	{
-		MESH tempMesh;
-		tempMesh.frameTransMtx.Identity();
+		MESH tempMesh;		
+		XMMath::Identity(tempMesh.frameTransMtx);
 		tempMesh.indexBuffer = 0;
 		tempMesh.vertexBuffer = 0;
 		auto& m = tempMesh.material;
-		m.ambient = Float4(0.3f, 0.3f, 0.3f, 0.3f);
-		m.diffuse = Float4(1, 1, 1, 1);
-		m.emission = Float4(0, 0, 0, 0);
-		m.specular = Float4(0, 0, 0, 0);
+		m.ambient = XMFLOAT4(0.3f, 0.3f, 0.3f, 0.3f);
+		m.diffuse = XMFLOAT4(1, 1, 1, 1);
+		m.emission = XMFLOAT4(0, 0, 0, 0);
+		m.specular = XMFLOAT4(0, 0, 0, 0);
 		m.power = 0;
 		m.texture = 0;
 		m.textureName = "";
@@ -1120,7 +1121,7 @@ bool LoadFBX::CreateVeretx(MODEL& model, int indexNum, const int* index, UVSet u
 }
 
 // FbxMatrixから変換
-void LoadFBX::CreateMtx(Matrix& mtx, const FbxMatrix fbxMtx)
+void LoadFBX::CreateMtx(XMFLOAT4X4& mtx, const FbxMatrix fbxMtx)
 {
 	for (int mtxXCnt = 0; mtxXCnt < 4; mtxXCnt++)
 	{
@@ -1136,9 +1137,9 @@ void LoadFBX::ReleaseTempObj(void)
 {
 	std::vector<VERTEXPOINTBONE>().swap(tempPoint_);
 	std::vector<VERTEXPOINTBONE>().swap(tempVertex_);
-	std::vector<Float3>().swap(tempNormal_);
-	std::vector<Float3>().swap(tempTangent_);
-	std::vector<Float4>().swap(tempColor_);
+	std::vector<XMFLOAT3>().swap(tempNormal_);
+	std::vector<XMFLOAT3>().swap(tempTangent_);
+	std::vector<XMFLOAT4>().swap(tempColor_);
 	std::vector<FBXUV>().swap(tempTexcoord_);
 	std::vector<UVSet>().swap(tempUVSet_);
 	std::vector<FBXANIMATION>().swap(tempAnim_);
@@ -1319,13 +1320,13 @@ void LoadFBX::GetAnimation(FBXANIMATION& animInfo)
 					FbxCluster* cluster = skin->GetCluster(k);
 
 					t.name = cluster->GetLink()->GetName();
-					std::vector<Matrix> tempAnim;
+					std::vector<XMFLOAT4X4> tempAnim;
 					for (int frameCnt = 0; frameCnt < animInfo.frameNum; frameCnt++)
 					{
 						FbxTime    time = (animInfo.startFrame + frameCnt) * animInfo.framePeriod.Get();
 						FbxAMatrix mtx = cluster->GetLink()->EvaluateGlobalTransform(time);
 
-						Matrix m;
+						XMFLOAT4X4 m;
 						this->CreateMtx(m, mtx);
 						tempAnim.emplace_back(m);
 					}
@@ -1338,12 +1339,12 @@ void LoadFBX::GetAnimation(FBXANIMATION& animInfo)
 		{
 			BONE t;
 			t.name = tempNode_[i]->GetName();
-			std::vector<Matrix> tempAnim;
+			std::vector<XMFLOAT4X4> tempAnim;
 			for (int j = 0; j < animInfo.frameNum; ++j)
 			{
 				FbxTime    time = (animInfo.startFrame + j) * animInfo.framePeriod.Get();
 				FbxAMatrix mtx = tempNode_[i]->EvaluateGlobalTransform(time);
-				Matrix m;
+				XMFLOAT4X4 m;
 				this->CreateMtx(m, mtx);
 				tempAnim.emplace_back(m);
 			}
